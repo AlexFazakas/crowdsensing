@@ -1,0 +1,52 @@
+Fazakas Alexandru
+335CA
+
+1. Detalii de implementare
+
+Tema a fost realizata folosind o implementare simpla a unui Thread Pool.
+Fiecare device are un thread pool, continand la randul sau 8 thread-uri care
+se ocupa de tot. Acestea comunica in principal prin intermediul unei cozi
+asincrone care contine Task-uri, o clasa wrapper care usureaza inserarea
+si scoaterea din coada. Fiecare thread incearca sa ia un astfel de Task
+din coada. Daca reuseste, atunci incearca sa obtina mutexul pentru locatia
+din script-ul din task-ul extras din coada, sa obtina datele de la vecini
+si de la sine, sa calculeze rezultatele pentru aceste date si apoi sa le
+paseze vecinilor. Altfel, asteapta accesul pentru zona respectiva. Toate
+aceste thread-uri sunt sincronizate de asemenea si cu o bariera reentranta
+implementata folosind semafoare (inclusa impreuna cu mutecsii pentru
+locatii in clasa de Synchronize).
+Clasa de Synchronize este instantiata o singura data, de un singur thread,
+insa toate thread-urile au o referinta la ea. Asta se realizeaza la
+inceputul simularii.
+
+2. Dificultati in implementare
+
+Am avut dificultati in a reusi sa sincronizez thread-urile, am dat peste
+cateva deadlock-uri si mai multe teste picate deoarece thread-urile nu se
+terminau. Am avut initial mai multe elemente de sincronizare, insa am
+reusit sa mai reduc din ele (obtinand astfel inca niste puncte).
+
+Nu stiam cum sa initializez mutecsii pe locatii, insa cineva mi-a sugerat
+sa ii initializez de la inceput si am realizat ca avem nevoie doar de 24
+dand un `grep -Ri location test/` :D
+
+3. Feedback
+
+O tema foarte interesanta (care poate fi aruncata pe un resume, heh),
+chiar mi-a placut ideea in sine.
+Un mic downside a fost (pentru mine) enuntul care nu era foarte clar,
+nu eram sigur cum interactioneaza device-urile intre ele, cum vin
+script-urile. :)
+
+4. Dificultate si timp acordat
+
+Dificultate: 8/10
+Timp acordat: ~14-15 ore.
+
+5. Referinte si surse de inspirate
+
+https://gist.github.com/kevinkreiser/6265428dbbbc8233aa8fd021bff0343a
+https://www.metachris.com/2016/04/python-threadpool/
+https://www.bogotobogo.com/python/Multithread/
+https://gitlab.gnome.org/GNOME/nautilus/blob/master/
+src/nautilus-file-operations.c#L81
